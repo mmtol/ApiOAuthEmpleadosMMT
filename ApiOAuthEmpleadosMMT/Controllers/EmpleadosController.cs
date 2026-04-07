@@ -22,8 +22,8 @@ namespace ApiOAuthEmpleadosMMT.Controllers
             return await repo.GetEmpleadosAsync();
         }
 
-        [Authorize]
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Empleado>> FindEmpleado(int id)
         {
             Empleado empleado = await repo.FindEmpleadoAsync(id);

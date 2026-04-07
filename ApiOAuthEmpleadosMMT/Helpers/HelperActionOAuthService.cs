@@ -32,6 +32,7 @@ namespace ApiOAuthEmpleadosMMT.Helpers
             //indicamos lo que va a validar dentro del token para permitir el acceso
             Action<JwtBearerOptions> options = new Action<JwtBearerOptions>(options =>
             {
+                options.TokenValidationParameters =
                 new TokenValidationParameters
                 {
                     ValidateIssuer = true,

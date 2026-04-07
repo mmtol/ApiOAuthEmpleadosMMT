@@ -14,7 +14,7 @@ builder.Services.AddSingleton<HelperActionOAuthService>(helper);
 //habilitamos la seguridad en el program
 builder.Services.AddAuthentication(helper.GetAuthenticationSchema()).AddJwtBearer(helper.GetJWTBearerOptions());
 
-string connectionString = builder.Configuration.GetConnectionString("SqlLocal");
+string connectionString = builder.Configuration.GetConnectionString("SqlAzure");
 builder.Services.AddDbContext<HospitalContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddTransient<RepositoryHospital>();
 
