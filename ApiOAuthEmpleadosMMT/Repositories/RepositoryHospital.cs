@@ -1,4 +1,5 @@
 ﻿using ApiOAuthEmpleadosMMT.Data;
+using ApiOAuthEmpleadosMMT.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiOAuthEmpleadosMMT.Repositories
@@ -20,6 +21,11 @@ namespace ApiOAuthEmpleadosMMT.Repositories
         public async Task<Models.Empleado> FindEmpleadoAsync(int id)
         {
             return await context.Empleados.FirstOrDefaultAsync(x => x.IdEmpleado == id);
+        }
+
+        public async Task<Empleado> LogInEmpleadoAsync(string apellido, int id)
+        {
+            return await context.Empleados.Where(x => x.Apellido == apellido && x.IdEmpleado == id).FirstOrDefaultAsync();
         }
     }
 }
