@@ -1,5 +1,6 @@
 ﻿using ApiOAuthEmpleadosMMT.Models;
 using ApiOAuthEmpleadosMMT.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiOAuthEmpleadosMMT.Controllers
@@ -21,6 +22,7 @@ namespace ApiOAuthEmpleadosMMT.Controllers
             return await repo.GetEmpleadosAsync();
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Empleado>> FindEmpleado(int id)
         {
