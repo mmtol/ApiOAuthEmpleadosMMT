@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 
 namespace MvcOAuthApiEmpleados.Services
 {
@@ -9,15 +10,16 @@ namespace MvcOAuthApiEmpleados.Services
     {
         private string url;
         private MediaTypeWithQualityHeaderValue header;
+        private IHttpContextAccessor context;
 
-        public ServiceEmpleados(IConfiguration configuration)
+        public ServiceEmpleados(IConfiguration configuration, IHttpContextAccessor context)
         {
             url = configuration.GetValue<string>("ApiUrls:ApiEmpleados");
-            //url = "https://apioauthempleadosmmt.azurewebsites.net/";
             header = new MediaTypeWithQualityHeaderValue("application/json");
+            this.context = context;
         }
 
-        private async Task<string> LogInAsync(string apellido, string idEmpleado)
+        public async Task<string> LogInAsync(string apellido, string idEmpleado)
         {
             string url = "https://apioauthempleadosmmt.azurewebsites.net/";
             LoginModel loginModel = new LoginModel
@@ -99,10 +101,11 @@ namespace MvcOAuthApiEmpleados.Services
             return empleados;
         }
 
-        //por ahora se recibe el token en el metodo
-        public async Task<Empleado> FindEmpleadoAsync(int idEmpleado, string token)
+        public async Task<Empleado> FindEmpleadoAsync(int idEmpleado)
         {
             string request = $"api/empleados/{idEmpleado}";
+            string token = context.HttpContext.User.FindFirstValue("token");
+
             Empleado empleado = await CallApiAsync<Empleado>(request, token);
             return empleado;
         }
