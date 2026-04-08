@@ -2,6 +2,8 @@
 using ApiOAuthEmpleadosMMT.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace ApiOAuthEmpleadosMMT.Controllers
 {
@@ -22,8 +24,8 @@ namespace ApiOAuthEmpleadosMMT.Controllers
             return await repo.GetEmpleadosAsync();
         }
 
-        [HttpGet("{id}")]
         [Authorize]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Empleado>> FindEmpleado(int id)
         {
             Empleado empleado = await repo.FindEmpleadoAsync(id);
@@ -32,6 +34,28 @@ namespace ApiOAuthEmpleadosMMT.Controllers
                 return NotFound();
             }
             return empleado;
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<ActionResult<Empleado>> Perfil()
+        {
+            Claim claim = HttpContext.User.FindFirst(z => z.Type == "UserData");
+            string jsonEmp = claim.Value;
+            Empleado empleado = JsonConvert.DeserializeObject<Empleado>(jsonEmp);
+            return await repo.FindEmpleadoAsync(empleado.IdEmpleado);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<ActionResult<List<Empleado>>> Compis()
+        {
+            Claim claim = HttpContext.User.FindFirst(z => z.Type == "UserData");
+            string jsonEmp = claim.Value;
+            Empleado empleado = JsonConvert.DeserializeObject<Empleado>(jsonEmp);
+            return await repo.GetCompisAsync(empleado.IdDepartamento);
         }
     }
 }

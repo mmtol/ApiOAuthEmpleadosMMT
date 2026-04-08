@@ -27,5 +27,10 @@ namespace ApiOAuthEmpleadosMMT.Repositories
         {
             return await context.Empleados.Where(x => x.Apellido == apellido && x.IdEmpleado == id).FirstOrDefaultAsync();
         }
+
+        public async Task<List<Empleado>> GetCompisAsync(int id)
+        {
+            return await context.Empleados.Where(x => x.IdDepartamento == id).ToListAsync();
+        }
     }
 }
