@@ -2,7 +2,6 @@
 using MvcOAuthApiEmpleados.Filters;
 using MvcOAuthApiEmpleados.Models;
 using MvcOAuthApiEmpleados.Services;
-using System.Security.Claims;
 
 namespace MvcOAuthApiEmpleados.Controllers
 {
@@ -32,11 +31,15 @@ namespace MvcOAuthApiEmpleados.Controllers
         [AuthorizeEmpleados]
         public async Task<IActionResult> Perfil()
         {
-            //necesitamos buscar el empleado con su claim 
-            var data = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-            int id = int.Parse(data.Value);
-            Empleado empleado = await service.FindEmpleadoAsync(id);
+            Empleado empleado = await service.GetPerfilAsync();
             return View(empleado);
+        }
+
+        [AuthorizeEmpleados]
+        public async Task<IActionResult> Compis()
+        {
+            List<Empleado> compis = await service.GetCompisAsync();
+            return View(compis);
         }
     }
 }

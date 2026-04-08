@@ -3,6 +3,7 @@ using ApiOAuthEmpleadosMMT.Models;
 using ApiOAuthEmpleadosMMT.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using MvcOAuthApiEmpleados.Helpers;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,12 +15,16 @@ namespace ApiOAuthEmpleadosMMT.Controllers
     public class AuthController : ControllerBase
     {
         private RepositoryHospital repo;
-        private HelperActionOAuthService helper;
+        private HelperActionOAuthService helperService;
+        private HelperCrytography helperCrypt;
+        private IConfiguration conf;
 
-        public AuthController(RepositoryHospital repo, HelperActionOAuthService helper)
+        public AuthController(RepositoryHospital repo, HelperActionOAuthService helper, HelperCrytography helperCrypt, IConfiguration conf)
         {
             this.repo = repo;
-            this.helper = helper;
+            this.helperService = helper;
+            this.helperCrypt = helperCrypt;
+            this.conf = conf;
         }
 
         [HttpPost]
@@ -34,10 +39,12 @@ namespace ApiOAuthEmpleadosMMT.Controllers
             else
             {
                 //debemos crear unas credenciales con nuestro token
-                SigningCredentials credentials = new SigningCredentials(helper.GetKeyToken(), SecurityAlgorithms.HmacSha256);
+                SigningCredentials credentials = new SigningCredentials(helperService.GetKeyToken(), SecurityAlgorithms.HmacSha256);
 
                 //almacenamos el empleado en los claims
                 string jsonEmp = JsonConvert.SerializeObject(empleado);
+                //encriptamos el json del empleado
+                jsonEmp = helperCrypt.Encrypt(jsonEmp, conf.GetValue<string>("KeyCryt"));
                 //creamos un array de claims para el token
                 Claim[] inf = new[]
                 {
@@ -48,8 +55,8 @@ namespace ApiOAuthEmpleadosMMT.Controllers
                 JwtSecurityToken token = new JwtSecurityToken
                     (
                         claims: inf,
-                        issuer: helper.Issuer,
-                        audience: helper.Audience,
+                        issuer: helperService.Issuer,
+                        audience: helperService.Audience,
                         signingCredentials: credentials,
                         expires: DateTime.UtcNow.AddMinutes(20),
                         notBefore: DateTime.UtcNow

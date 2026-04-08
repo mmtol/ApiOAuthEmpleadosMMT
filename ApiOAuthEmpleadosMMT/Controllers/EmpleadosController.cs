@@ -2,6 +2,7 @@
 using ApiOAuthEmpleadosMMT.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MvcOAuthApiEmpleados.Helpers;
 using Newtonsoft.Json;
 using System.Security.Claims;
 
@@ -12,10 +13,14 @@ namespace ApiOAuthEmpleadosMMT.Controllers
     public class EmpleadosController : ControllerBase
     {
         private RepositoryHospital repo;
+        private HelperCrytography helperCrypt;
+        private IConfiguration conf;
 
-        public EmpleadosController(RepositoryHospital repo)
+        public EmpleadosController(RepositoryHospital repo, HelperCrytography helperCrypt, IConfiguration conf)
         {
             this.repo = repo;
+            this.helperCrypt = helperCrypt;
+            this.conf = conf;
         }
 
         [HttpGet]
@@ -42,7 +47,7 @@ namespace ApiOAuthEmpleadosMMT.Controllers
         public async Task<ActionResult<Empleado>> Perfil()
         {
             Claim claim = HttpContext.User.FindFirst(z => z.Type == "UserData");
-            string jsonEmp = claim.Value;
+            string jsonEmp = helperCrypt.Decrypt(claim.Value, conf.GetValue<string>("KeyCryt"));
             Empleado empleado = JsonConvert.DeserializeObject<Empleado>(jsonEmp);
             return await repo.FindEmpleadoAsync(empleado.IdEmpleado);
         }

@@ -2,6 +2,7 @@ using ApiOAuthEmpleadosMMT.Data;
 using ApiOAuthEmpleadosMMT.Helpers;
 using ApiOAuthEmpleadosMMT.Repositories;
 using Microsoft.EntityFrameworkCore;
+using MvcOAuthApiEmpleados.Helpers;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,8 @@ HelperActionOAuthService helper = new HelperActionOAuthService(builder.Configura
 builder.Services.AddSingleton<HelperActionOAuthService>(helper);
 //habilitamos la seguridad en el program
 builder.Services.AddAuthentication(helper.GetAuthenticationSchema()).AddJwtBearer(helper.GetJWTBearerOptions());
+
+builder.Services.AddTransient<HelperCrytography>();
 
 string connectionString = builder.Configuration.GetConnectionString("SqlAzure");
 builder.Services.AddDbContext<HospitalContext>(options => options.UseSqlServer(connectionString));
