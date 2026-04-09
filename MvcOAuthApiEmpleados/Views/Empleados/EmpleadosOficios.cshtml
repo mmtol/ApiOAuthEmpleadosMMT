@@ -1,0 +1,73 @@
+﻿@model List<Empleado>
+
+@{
+    List<string> oficios = ViewData["oficios"] as List<string>;
+}
+
+<h1>Empleados por Oficio</h1>
+
+<form method="post">
+    <label>Oficio</label>
+    <select name="elegidos" multiple>
+        <option>-- Seleccione un oficio --</option>
+        @foreach (var oficio in oficios)
+        {
+            <option value="@oficio">@oficio</option>
+        }
+    </select>
+    <label>Incremento</label>
+    <input type="number" name="incremento" />
+    <button name="accion" value="get">Mostrar</button>
+    <button name="accion" value="update">Incrementar</button>
+</form>
+
+@if (Model != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    IdEmpleado
+                </th>
+                <th>
+                    Apellido
+                </th>
+                <th>
+                    Oficio
+                </th>
+                <th>
+                    Salario
+                </th>
+                <th>
+                    IdDepartamento
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IdEmpleado)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Apellido)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Oficio)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Salario)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IdDepartamento)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Details", "Details", new { id = item.IdEmpleado })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
