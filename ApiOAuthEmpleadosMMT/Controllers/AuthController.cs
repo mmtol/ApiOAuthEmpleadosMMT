@@ -41,14 +41,25 @@ namespace ApiOAuthEmpleadosMMT.Controllers
                 //debemos crear unas credenciales con nuestro token
                 SigningCredentials credentials = new SigningCredentials(helperService.GetKeyToken(), SecurityAlgorithms.HmacSha256);
 
+                //creamos nuestro modelo para almacenarlo en el token
+                EmpleadoModel empModel = new EmpleadoModel
+                {
+                    IdEmpleado = empleado.IdEmpleado,
+                    Apellido = empleado.Apellido,
+                    Oficio = empleado.Oficio,
+                    Salario = empleado.Salario,
+                    IdDepartamento = empleado.IdDepartamento
+                };
+
                 //almacenamos el empleado en los claims
-                string jsonEmp = JsonConvert.SerializeObject(empleado);
+                string jsonEmp = JsonConvert.SerializeObject(empModel);
                 //encriptamos el json del empleado
                 jsonEmp = helperCrypt.Encrypt(jsonEmp, conf.GetValue<string>("KeyCryt"));
                 //creamos un array de claims para el token
                 Claim[] inf = new[]
                 {
-                    new Claim("UserData", jsonEmp)
+                    new Claim("UserData", jsonEmp),
+                    new Claim(ClaimTypes.Role, empleado.Oficio)
                 };
 
                 //el token se genera con una clase y debemos almacenar los datos

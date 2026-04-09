@@ -9,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddHttpContextAccessor();
+
 HelperActionOAuthService helper = new HelperActionOAuthService(builder.Configuration);
 //esta instancia solo debemos crearla 1 vez
 builder.Services.AddSingleton<HelperActionOAuthService>(helper);
@@ -16,6 +18,7 @@ builder.Services.AddSingleton<HelperActionOAuthService>(helper);
 builder.Services.AddAuthentication(helper.GetAuthenticationSchema()).AddJwtBearer(helper.GetJWTBearerOptions());
 
 builder.Services.AddTransient<HelperCrytography>();
+builder.Services.AddTransient<HelperEmpleadoToken>();
 
 string connectionString = builder.Configuration.GetConnectionString("SqlAzure");
 builder.Services.AddDbContext<HospitalContext>(options => options.UseSqlServer(connectionString));

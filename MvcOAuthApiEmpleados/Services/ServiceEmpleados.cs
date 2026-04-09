@@ -127,5 +127,19 @@ namespace MvcOAuthApiEmpleados.Services
             List<Empleado> compis = await CallApiAsync<List<Empleado>>(request, token);
             return compis;
         }
+
+        //tanto en incrementar como en buscar empleados por oficio
+        //necesitamos generar el siguiente string para elrequest
+        //oficio = ANALISTA&oficio=DIRECTOR
+        //a partir de una coleccion
+        public string TransformCollectionToQuery(List<string> oficios)
+        {
+            string result = "";
+            foreach (string oficio in oficios)
+            {
+                result += $"oficio={oficio}&";
+            }
+            return result.TrimEnd('&');
+        }
     }
 }
